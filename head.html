@@ -63,7 +63,7 @@
         defaultConsent: "in",
         edgeDomain: "edge.adobedc.net",
         edgeBasePath: "ee",
-        datastreamId: "1f3264c9-26c8-464f-ac67-86786cff9387", // replace datastreamId
+        datastreamId: "99c9d7bf-2bbf-4406-8615-697d38e49c89", // replace datastreamId
         orgId: "907075E95BF479EC0A495C73@AdobeOrg", // replace ims org Id
         debugEnabled: true,
         idMigrationEnabled: false,
@@ -71,20 +71,31 @@
         prehidingStyle: ".personalization-container { opacity: 0 !important }",
     });
 
-window["alloy"]("sendEvent", {
-    conversation: {
-        fetchConversationalExperience: true
-    }
-}).then(result => {
-    console.log("Conversation experience fetched", result);
-    window["alloy"]("bootstrapConversationalExperience", {
-        selector: "#brand-concierge-mount",
-        src: "/scripts/brandconciergemain.js",
-        stylingConfigurations: window.styleConfiguration,
-        stickySession: true // create a sticky session cookie with expiration
-    })
-});
+    window["alloy"]("sendEvent", {
+        conversation: {
+            fetchConversationalExperience: true
+        }
+    }).then(result => {
+        console.log("Conversation experience fetched", result);
+        const bootstrapConversationalExperience = (cnt) => {
+            if(document.querySelector('#brand-concierge-mount'))
+            {
+                window["alloy"]("bootstrapConversationalExperience", {
+                    selector: "#brand-concierge-mount",
+                    src: "/scripts/brandconciergemain.js",
+                    stylingConfigurations: window.styleConfiguration,
+                    stickySession: true // create a sticky session cookie with expiration
+                });
+            }else{
+                if(cnt<10){
+                  setTimeout(()=>{bootstrapConversationalExperience(cnt+1)}, 100);
+                }
+            }
+        };
+        bootstrapConversationalExperience(0);
+    });
 </script>
+ 
 
 <script nonce="aem" src="/scripts/aem.js" type="module"></script>
 <script nonce="aem" src="/scripts/scripts.js" type="module"></script>
